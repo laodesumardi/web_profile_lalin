@@ -232,9 +232,13 @@
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button class="text-gray-500 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded" id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <button class="p-2 rounded-md text-gray-600 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50" id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
+                        <span class="sr-only">Toggle main menu</span>
+                        <svg id="icon-menu" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="icon-close" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -278,7 +282,7 @@
         </div>
 
         <!-- Mobile menu -->
-        <div class="md:hidden hidden" id="mobile-menu">
+        <div class="md:hidden hidden fixed inset-x-0 z-[60]" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="{{ route('home') }}" class="text-gray-500 hover:text-primary block px-3 py-2 text-base font-medium">Beranda</a>
                 <a href="{{ route('news.index') }}" class="text-gray-500 hover:text-primary block px-3 py-2 text-base font-medium">Berita</a>
@@ -313,6 +317,7 @@
                 @endauth
             </div>
         </div>
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 md:hidden hidden z-[50]"></div>
     </nav>
 
     <!-- Page Header -->
@@ -364,75 +369,6 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Navigation -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-
-            if (mobileMenuButton && mobileMenu) {
-                mobileMenuButton.addEventListener('click', function() {
-                    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-                    mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-
-            // User menu toggle
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userMenu = document.getElementById('user-menu');
-
-            if (userMenuButton && userMenu) {
-                userMenuButton.addEventListener('click', function() {
-                    const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
-                    userMenuButton.setAttribute('aria-expanded', !isExpanded);
-                    userMenu.classList.toggle('hidden');
-                });
-
-                // Close user menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                        userMenuButton.setAttribute('aria-expanded', 'false');
-                        userMenu.classList.add('hidden');
-                    }
-                });
-
-                // Keyboard navigation for user menu
-                userMenu.addEventListener('keydown', function(e) {
-                    const menuItems = userMenu.querySelectorAll('[role="menuitem"]');
-                    const currentIndex = Array.from(menuItems).indexOf(document.activeElement);
-
-                    switch(e.key) {
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            const nextIndex = currentIndex < menuItems.length - 1 ? currentIndex + 1 : 0;
-                            menuItems[nextIndex].focus();
-                            break;
-                        case 'ArrowUp':
-                            e.preventDefault();
-                            const prevIndex = currentIndex > 0 ? currentIndex - 1 : menuItems.length - 1;
-                            menuItems[prevIndex].focus();
-                            break;
-                        case 'Escape':
-                            userMenuButton.setAttribute('aria-expanded', 'false');
-                            userMenu.classList.add('hidden');
-                            userMenuButton.focus();
-                            break;
-                    }
-                });
-            }
-
-            // Close menus on escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        mobileMenu.classList.add('hidden');
-                    }
-                }
-            });
-        });
-    </script>
+    <!-- Navigation scripts handled globally in resources/js/app.js -->
 </body>
 </html>
