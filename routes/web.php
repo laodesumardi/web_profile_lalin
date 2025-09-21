@@ -8,34 +8,35 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\WelcomeController;
+use Illuminate\Support\Facades\DB;
 
 // Test route for database connection and table structure
-Route::get('/test-db', function() {
+Route::get('/test-db', function () {
     try {
         // Test database connection
         DB::connection()->getPdo();
-        
+
         // Check if news table exists
         $tables = DB::select('SHOW TABLES');
         $tables = array_map('current', json_decode(json_encode($tables), true));
-        
+
         $result = [];
         $result[] = 'Connected to database: ' . DB::connection()->getDatabaseName();
         $result[] = 'Tables in database: ' . implode(', ', $tables);
-        
+
         // Check if news table exists
         if (in_array('news', $tables)) {
             // Get news table columns
             $columns = DB::getSchemaBuilder()->getColumnListing('news');
             $result[] = 'News table columns: ' . implode(', ', $columns);
-            
+
             // Check if is_published and published_at columns exist
             $hasIsPublished = in_array('is_published', $columns);
             $hasPublishedAt = in_array('published_at', $columns);
-            
+
             $result[] = 'Has is_published column: ' . ($hasIsPublished ? 'Yes' : 'No');
             $result[] = 'Has published_at column: ' . ($hasPublishedAt ? 'Yes' : 'No');
-            
+
             // Get some sample data
             $sample = DB::table('news')->first();
             if ($sample) {
@@ -51,16 +52,16 @@ Route::get('/test-db', function() {
         } else {
             $result[] = 'News table does not exist in the database.';
         }
-        
+
         // Check if users table exists
         if (in_array('users', $tables)) {
             $columns = DB::getSchemaBuilder()->getColumnListing('users');
             $result[] = 'Users table columns: ' . implode(', ', $columns);
-            
+
             // Get the column type for the role column
             $roleColumnType = DB::getSchemaBuilder()->getColumnType('users', 'role');
             $result[] = 'Role column type: ' . $roleColumnType;
-            
+
             // Get sample user data
             $sampleUser = DB::table('users')->first();
             if ($sampleUser) {
@@ -73,12 +74,11 @@ Route::get('/test-db', function() {
                 ]);
             }
         }
-        
+
         return implode("\n<br>", $result);
-        
     } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage() . "\n<br>" . 
-               'File: ' . $e->getFile() . ':' . $e->getLine();
+        return 'Error: ' . $e->getMessage() . "\n<br>" .
+            'File: ' . $e->getFile() . ':' . $e->getLine();
     }
 });
 
@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    
+
     // Password Change Routes
     Route::get('/password/change', [ProfileController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/password/change', [ProfileController::class, 'changePassword'])->name('password.update');
@@ -112,7 +112,7 @@ Route::middleware('auth')->group(function () {
     // News routes for authenticated users
     Route::get('news/create', [NewsController::class, 'create'])->name('news.create');
     Route::post('news', [NewsController::class, 'store'])->name('news.store');
-        
+
     // User's own news management
     Route::prefix('my-news')->name('my.')->group(function () {
         Route::get('/', [NewsController::class, 'myNews'])->name('news.index');
@@ -124,7 +124,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         // Dashboard
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-        
+
         // News Management
         Route::prefix('news')->group(function () {
             Route::get('/', [NewsController::class, 'index'])->name('admin.news.index');
@@ -135,7 +135,7 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{id}/toggle-publish', [NewsController::class, 'togglePublish'])->name('admin.news.toggle-publish');
             Route::delete('/{id}', [NewsController::class, 'destroy'])->name('admin.news.destroy');
         })->where('id', '[0-9]+');
-        
+
         // Employee Management
         Route::prefix('employees')->group(function () {
             Route::get('/', [EmployeeController::class, 'adminIndex'])->name('admin.employees.index');
