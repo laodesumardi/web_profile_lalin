@@ -17,8 +17,19 @@ import './bootstrap';
     const iconMenu = document.getElementById('icon-menu');
     const iconClose = document.getElementById('icon-close');
 
+    // Helper: compute and set mobile drawer position under navbar
+    const positionMobileMenu = () => {
+      if (!mobileMenu) return;
+      const nav = document.querySelector('nav');
+      const navHeight = nav ? nav.offsetHeight : 64; // fallback ~top-16
+      mobileMenu.style.top = navHeight + 'px';
+      mobileMenu.style.maxHeight = `calc(100vh - ${navHeight}px)`;
+      mobileMenu.style.overflowY = 'auto';
+    };
+
     if (mobileMenuButton && mobileMenu) {
       const openMobile = () => {
+        positionMobileMenu();
         mobileMenu.classList.remove('hidden');
         if (mobileOverlay) mobileOverlay.classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
@@ -60,10 +71,17 @@ import './bootstrap';
         if (e.key === 'Escape') closeMobile();
       });
 
-      // Close on resize to md and above
+      // Recompute position on resize; close on desktop
       bindOnce(window, 'resize', () => {
-        if (window.innerWidth >= 768) closeMobile();
+        if (window.innerWidth >= 768) {
+          closeMobile();
+        } else if (!mobileMenu.classList.contains('hidden')) {
+          positionMobileMenu();
+        }
       });
+
+      // Initial compute in case nav height differs
+      positionMobileMenu();
     }
 
     // Click dropdowns (desktop)

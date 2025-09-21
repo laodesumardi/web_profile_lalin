@@ -26,8 +26,8 @@
             </div>
             
             <!-- Mobile menu button -->
-            <div class="md:hidden">
-                <button class="text-gray-500 hover:text-primary focus:outline-none focus:text-primary" id="mobile-menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
+            <div class="md:hidden flex items-center">
+                <button class="p-2 rounded-md text-gray-600 hover:text-primary focus:outline-none focus:text-primary" id="mobile-menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
                     <span class="sr-only">Toggle main menu</span>
                     <svg id="icon-menu" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -107,7 +107,7 @@
     </div>
     
     <!-- Mobile menu -->
-    <div class="md:hidden hidden fixed top-16 inset-x-0 z-[60]" id="mobile-menu">
+    <div class="md:hidden hidden fixed inset-x-0 z-[60]" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
             <a href="{{ route('home') }}" 
                class="{{ request()->routeIs('home') ? 'text-primary bg-blue-50' : 'text-gray-500 hover:text-primary hover:bg-gray-50' }} block px-3 py-2 text-base font-medium rounded-md transition duration-150">
